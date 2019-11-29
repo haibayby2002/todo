@@ -5,6 +5,7 @@
       <div class="left-side">
         <span class="title">Welcome to your new project!</span>
         <div>
+          <todos />
           <b-card
             title="Card Title"
             img-src="https://picsum.photos/600/300/?image=25"
@@ -16,6 +17,7 @@
           >
             <b-card-text>Some quick example text to build on the card title and make up the bulk of the card's content.</b-card-text>
 
+            
             <b-button href="#" variant="primary">Go somewhere</b-button>
           </b-card>
         </div>
@@ -46,10 +48,10 @@
 </template>
 
 <script>
-
+import Todos from './LandingPage/Todos';
 export default {
   name: "landing-page",
-  components: {  },
+  components: { Todos, },
   methods: {
     open(link) {
       this.$electron.shell.openExternal(link);
