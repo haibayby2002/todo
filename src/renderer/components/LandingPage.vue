@@ -1,25 +1,11 @@
 <template>
   <div id="wrapper">
-    <img id="logo" src="~@/assets/logo.png" alt="electron-vue" />
+    <!-- <img id="logo" src="~@/assets/logo.png" alt="electron-vue" /> -->
     <main>
-      <div class="left-side">
+      <!-- <div class="left-side">
         <span class="title">Welcome to your new project!</span>
         <div>
           <todos />
-          <b-card
-            title="Card Title"
-            img-src="https://picsum.photos/600/300/?image=25"
-            img-alt="Image"
-            img-top
-            tag="article"
-            style="max-width: 20rem;"
-            class="mb-2"
-          >
-            <b-card-text>Some quick example text to build on the card title and make up the bulk of the card's content.</b-card-text>
-
-            
-            <b-button href="#" variant="primary">Go somewhere</b-button>
-          </b-card>
         </div>
       </div>
 
@@ -42,16 +28,69 @@
           <button class="alt" @click="open('https://electron.atom.io/docs/')">Electron</button>
           <button class="alt" @click="open('https://vuejs.org/v2/guide/')">Vue.js</button>
         </div>
+      </div>-->
+      <div class="row">
+        <div class="col-12 col-lg-5">
+          <todos :things="todos"/>
+        </div>
+        <div class="col-12 col-lg-5 offset-lg-1">
+          
+        </div>
+      </div>
+      <hr class="bg-success text-success">
+      <h3 class="text-center text-primary mb-2 mt-1">Đề xuất cho bạn</h3>
+      <div class="row">
+        <recommend :listTodo="todos"/>
       </div>
     </main>
   </div>
 </template>
 
 <script>
-import Todos from './LandingPage/Todos';
+import Todos from "./LandingPage/Todos";
+import Recommend from "./LandingPage/Recommend";
 export default {
   name: "landing-page",
-  components: { Todos, },
+  components: { Todos, Recommend },
+  data: function(){
+    return {
+      todos: [],
+    }
+  },
+  mounted: function() {
+    var knex = require("knex")({
+      client: "sqlite3",
+      connection: {
+        filename: "./base.sqlite"
+      },
+      useNullAsDefault: true
+    });
+    
+    var res = knex
+      .select("*")
+      .from("tasks")
+      .then(rows => {
+        rows.forEach(row => {
+          // console.log(`${row["id"]} ${row["name"]} `);
+          (this.todos).push({
+              "id" : row["id"], 
+              "title": row["name"],
+              "state": row["state"],
+              "description": row["description"]
+          });
+          // console.log(row);
+        });
+      })
+      .catch(err => {
+        console.log(err);
+        throw err;
+      })
+      .finally(() => {
+        knex.destroy();
+      });
+
+      
+  },
   methods: {
     open(link) {
       this.$electron.shell.openExternal(link);
@@ -79,7 +118,7 @@ body {
     rgba(255, 255, 255, 1) 40%,
     rgba(229, 229, 229, 0.9) 100%
   );
-  height: 100vh;
+  /* height: 100vh; */
   padding: 60px 80px;
   width: 100vw;
 }

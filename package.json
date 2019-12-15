@@ -14,7 +14,8 @@
     "pack": "npm run pack:main && npm run pack:renderer",
     "pack:main": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.main.config.js",
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
-    "postinstall": ""
+    "postinstall": "electron-rebuild",
+    "rebuild": "electron-rebuild -f -w sqlite3"
   },
   "build": {
     "productName": "my-todos",
@@ -51,8 +52,10 @@
     }
   },
   "dependencies": {
-    "vue": "^2.5.16",
     "axios": "^0.18.0",
+    "knex": "^0.20.4",
+    "sqlite3": "^4.1.1",
+    "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1",
@@ -67,6 +70,7 @@
     "babel-preset-stage-0": "^6.24.1",
     "babel-register": "^6.26.0",
     "babili-webpack-plugin": "^0.1.2",
+    "better-sqlite3": "^5.4.3",
     "bootstrap": "^4.3.1",
     "bootstrap-vue": "^2.1.0",
     "cfonts": "^2.1.2",
@@ -77,9 +81,10 @@
     "del": "^3.0.0",
     "devtron": "^1.4.0",
     "electron": "^2.0.4",
-    "electron-builder": "^20.19.2",
+    "electron-builder": "^20.44.4",
     "electron-debug": "^1.5.0",
     "electron-devtools-installer": "^2.2.4",
+    "electron-rebuild": "^1.8.8",
     "file-loader": "^1.1.11",
     "html-webpack-plugin": "^3.2.0",
     "mini-css-extract-plugin": "0.4.0",
@@ -87,7 +92,6 @@
     "node-loader": "^0.6.0",
     "node-sass": "^4.9.2",
     "sass-loader": "^7.0.3",
-    "sqlite3": "^4.1.0",
     "style-loader": "^0.21.0",
     "url-loader": "^1.0.1",
     "vue-html-loader": "^1.2.4",
