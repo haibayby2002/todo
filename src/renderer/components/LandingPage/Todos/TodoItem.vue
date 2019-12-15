@@ -14,11 +14,11 @@
         <div class="input-group-text">
           <input
             v-model="done"
-            v-if="state == 0"
+            v-if="status == 0"
             type="checkbox"
             aria-label="Checkbox for following text input"
           />
-          <span v-else-if="state == 1" class="glyphicon text-success">&#xe013;</span>
+          <span v-else-if="status == 1" class="glyphicon text-success">&#xe013;</span>
           <span v-else class="glyphicon text-danger">&#xe020;</span>
         </div>
       </div>
@@ -46,7 +46,7 @@
       <!-- <div class="input-group-append">
         <a href="#" class="btn btn-danger form-control">&times;</a>
       </div>-->
-      <button v-if="state < 2" type="button" class="close" aria-label="Close" @click="removeTodo">
+      <button v-if="status < 2" type="button" class="close" aria-label="Close" @click="removeTodo">
         <span aria-hidden="true" style="color: red;">&times;</span>
       </button>
     </div>
@@ -69,22 +69,17 @@ export default {
       done: false, //check or uncheck
       editting: false, //check if editting
       editTemp: "",
-      status: false
+      status: 0,
     };
   },
   mounted: function() {
     this.title_data = this.title;
-    // console.log(this.id);
-    // var knex = require("knex")({
-    //   client: "sqlite3",
-    //   connection: {
-    //     filename: "./base.db"
-    //   }
-    // });
+    this.status = this.state;
+    // console.log(this.id + ' ' + this.title_data);
   },
   methods: {
     edit: function() {
-      if (this.state > 0) {
+      if (this.status > 0) {
         return;
       }
       this.editTemp = this.title_data;
@@ -101,6 +96,26 @@ export default {
     done_edit: function() {
       this.title_data = this.editTemp;
       this.editting = false;
+      //Update db
+      var knex = require("knex")({
+        client: "sqlite3",
+        connection: {
+          filename: "./base.sqlite"
+        },
+        useNullAsDefault: true
+      });
+      knex("tasks")
+        .where({ id: this.id })
+        .update({
+          name: this.title_data
+        })
+        .catch(err => {
+          console.log(err);
+          throw err;
+        })
+        .finally(() => {
+          knex.destroy();
+        });
     },
     removeTodo: function() {
       const { dialog } = require("electron").remote;
@@ -113,13 +128,11 @@ export default {
         message: "Xác nhận xóa",
         detail: "Bạn có chắc chắn muốn xóa lời nhắc " + this.title
       };
-      // dialog.showMessageBox(remote.getCurrentWindow(), options, (response) =>{
-      //   console.log(response);
-      // });
       dialog.showMessageBox(null, options, response => {
         if (response == 0) {
           // console.log('OK');
-          this.$emit("removeTodoItem", this.id);
+          this.status = 2;
+          this.$emit("removeTodoItem", this);
         }
       });
     }
@@ -130,9 +143,32 @@ export default {
     // }
   },
   watch: {
-    // done: function(val){
-    //   console.log(val);
-    // }
+    done: function(val){
+      // var temp = this.done ? 1 : 0;
+      //Update db
+      var knex = require("knex")({
+        client: "sqlite3",
+        connection: {
+          filename: "./base.sqlite"
+        },
+        useNullAsDefault: true
+      });
+      knex("tasks")
+        .where({ id: this.id })
+        .update({
+          state: this.done ? 1 : 0
+        })
+        .catch(err => {
+          console.log(err);
+          throw err;
+        })
+        .finally(() => {
+          knex.destroy();
+        });
+    }
+  },
+  beforeDestroy: function(){
+    
   }
 };
 </script>

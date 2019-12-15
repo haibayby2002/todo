@@ -7,10 +7,10 @@
         active-nav-item-class="font-weight-bold text-uppercase text-warning"
         active-tab-class="font-weight-bold text-success"
       >
-        <b-tab title="Đang làm" class="box-todo" active>
+        <b-tab title="Đang làm" active>
           <h4 class="text-center mb-3 bg-light pt-2 pb-2">Công việc lên kế hoạch đang làm!</h4>
           <b-card-text>
-            <ul>
+            <ul class="box-todo">
               <li v-for="todoThing in todoThings" v-bind:key="todoThing.id">
                 <todo-item
                   v-bind:title="todoThing.title"
@@ -21,12 +21,23 @@
                 ></todo-item>
               </li>
             </ul>
+            <!-- Add -->
+            <b-input-group class="mt-4">
+              <b-form-input
+                v-model="newWorkplan"
+                placeholder="Nhập workplan mới vào đây"
+                @keyup.enter="addWorkplan"
+              ></b-form-input>
+              <b-input-group-append>
+                <b-button variant="primary" @click="addWorkplan">Tạo</b-button>
+              </b-input-group-append>
+            </b-input-group>
           </b-card-text>
         </b-tab>
-        <b-tab title="Ôn lại" class="box-todo">
+        <b-tab title="Ôn lại">
           <b-card-text>
             <h4 class="text-center mb-3 bg-light pt-2 pb-2">Việc đã xong</h4>
-            <ul>
+            <ul class="box-todo">
               <li v-for="todoThing in todoThings" v-bind:key="todoThing.id">
                 <todo-item
                   v-bind:title="todoThing.title"
@@ -39,10 +50,10 @@
             </ul>
           </b-card-text>
         </b-tab>
-        <b-tab title="Lịch sử" class="box-todo">
+        <b-tab title="Lịch sử">
           <b-card-text>
             <h4 class="text-center mb-3 bg-light pt-2 pb-2">Việc đã xóa</h4>
-            <ul>
+            <ul class="box-todo">
               <li v-for="todoThing in todoThings" v-bind:key="todoThing.id">
                 <todo-item
                   v-bind:title="todoThing.title"
@@ -61,12 +72,11 @@
 
 <script>
 import TodoItem from "./Todos/TodoItem";
-
 export default {
   name: "todos",
   components: { TodoItem },
   props: {
-    things: Array,
+    things: Array
   },
   data: function() {
     return {
@@ -80,49 +90,85 @@ export default {
         // { title: "olalal", id: 7, state: 2 },
         // { title: "wafaa", id: 8, state: 2 }
       ],
-      tab: 0
+      tab: 0,
+      newWorkplan: ""
     };
   },
   mounted: function() {
     const path = require("path");
     this.todoThings = this.things;
-    // var knex = require("knex")({
-    //   client: "sqlite3",
-    //   connection: {
-    //     filename: "./base.sqlite"
-    //   },
-    //   useNullAsDefault: true
-    // });
-    
-    // var res = knex
-    //   .select("*")
-    //   .from("tasks")
-    //   .then(rows => {
-    //     rows.forEach(row => {
-    //       // console.log(`${row["id"]} ${row["name"]} `);
-    //       this.todoThings.push({
-    //           "id" : row["id"], 
-    //           "title": row["name"],
-    //           "state": row["state"],
-    //           "description": row["description"]
-    //       });
-    //       // console.log(row);
-    //     });
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //     throw err;
-    //   })
-    //   .finally(() => {
-    //     knex.destroy();
-    //   });
-    
+  },
+  computed: {
+    maxId: function() {
+      if (this.todoThings.length == 0) {
+        return;
+      }
+      return this.todoThings.reduce((a, b) =>
+        Number(a.id) > Number(b.id) ? a : b
+      ).id;
+    }
   },
   methods: {
-    removeItem: function(id) {
-      console.log("remove id " + id);
-      this.todoThings.splice(this.todoThings.findIndex(x => x.id == id), 1);
-      //Remove id in database by using update
+    removeItem: function(val) {
+      //Delete in todo or reivew
+      this.todoThings.splice(this.todoThings.findIndex(x => x.id == val.id), 1);
+      //Add to removed tag
+      this.todoThings.push({
+        id: val.id,
+        title: val.title,
+        state: 2,
+        description: val.description
+      });
+      //Update state in database
+      var knex = require("knex")({
+        client: "sqlite3",
+        connection: {
+          filename: "./base.sqlite"
+        },
+        useNullAsDefault: true
+      });
+      knex("tasks")
+        .where({ id: val.id })
+        .update({
+          state: 2
+        })
+        .catch(err => {
+          console.log(err);
+          throw err;
+        })
+        .finally(() => {
+          knex.destroy();
+        });
+    },
+    addWorkplan: function() {
+      //Insert to db
+      var knex = require("knex")({
+        client: "sqlite3",
+        connection: {
+          filename: "./base.sqlite"
+        },
+        useNullAsDefault: true
+      });
+      var res = knex("tasks")
+        .insert({
+          name: this.newWorkplan,
+          state: 0
+        })
+        .catch(err => {
+          console.log(err);
+          throw err;
+        })
+        .finally(() => {
+          knex.destroy();
+        });
+      console.log(res);
+      //insert to view
+      this.todoThings.push({
+        id: this.maxId + 1,
+        title: this.newWorkplan,
+        state: 0,
+      });
+      this.newWorkplan = '';
     }
   }
 };
