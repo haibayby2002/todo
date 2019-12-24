@@ -1,7 +1,7 @@
 <template>
   <div class="w-33 mt-2 pl-1 pr-1">
     <div class="card">
-      <img src="https://picsum.photos/600/300/?image=25" class="card-img-top" alt="Image" />
+      <img :src="img_src" class="card-img-top" alt="Image" />
       <div class="card-body">
         <h5 class="card-title">Card title</h5>
         <p class="card-text my-card-text">{{description}} hello</p>
@@ -68,6 +68,7 @@ export default {
   -ms-flex: 0 0 20% !important;
   flex: 0 0 20% !important;
   max-width: 25%;
+  
   float: left;
 }
 .my-card-text {

@@ -1,5 +1,5 @@
 <template>
-  <div class="todos">
+  <div class="todos mb-3">
     <b-card no-body>
       <b-tabs
         card
@@ -21,6 +21,7 @@
                 ></todo-item>
               </li>
             </ul>
+            <hr>
             <!-- Add -->
             <b-input-group class="mt-4">
               <b-form-input
@@ -179,7 +180,9 @@ export default {
   list-style-type: none;
 }
 .box-todo {
-  max-height: 400px;
+  margin-top: 2rem;
+  padding-right: 2rem;
+  height: 300px; 
   overflow-y: scroll;
 }
 </style>

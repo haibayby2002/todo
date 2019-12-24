@@ -47,7 +47,7 @@
         <a href="#" class="btn btn-danger form-control">&times;</a>
       </div>-->
       <button v-if="status < 2" type="button" class="close" aria-label="Close" @click="removeTodo">
-        <span aria-hidden="true" style="color: red;">&times;</span>
+        <span aria-hidden="true" :title="'Xóa workplan ' + title_data" style="color: red;">&times;</span>
       </button>
     </div>
   </div>

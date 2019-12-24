@@ -30,11 +30,11 @@
         </div>
       </div>-->
       <div class="row">
-        <div class="col-12 col-lg-5">
+        <div class="col-12 col-lg-6">
           <todos :things="todos"/>
         </div>
-        <div class="col-12 col-lg-5 offset-lg-1">
-          
+        <div class="col-12 col-lg-5">
+          <notify :listNotifies="notifies"/>
         </div>
       </div>
       <hr class="bg-success text-success">
@@ -43,18 +43,27 @@
         <recommend :listTodo="todos"/>
       </div>
     </main>
+    <!-- Test -->
+    <!-- <ul>
+      <li v-for="(test, idx) in tests" v-bind:key="idx">{{test}}</li>
+    </ul> -->
   </div>
 </template>
 
 <script>
 import Todos from "./LandingPage/Todos";
 import Recommend from "./LandingPage/Recommend";
+import Notify from "./LandingPage/Notify";
+var globalTodo = [];
+var globalTime = [];
 export default {
   name: "landing-page",
-  components: { Todos, Recommend },
+  components: { Todos, Recommend, Notify },
   data: function(){
     return {
       todos: [],
+      notifies: [],
+      tests: [],
     }
   },
   mounted: function() {
@@ -78,6 +87,8 @@ export default {
               "state": row["state"],
               "description": row["description"]
           });
+          
+          // this.tests.push(row["name"]);
           // console.log(row);
         });
       })
@@ -89,7 +100,28 @@ export default {
         knex.destroy();
       });
 
+      var not = knex
+      .select("*")
+      .from("Notifies")
+      .then(rows => {
+        rows.forEach(row => {
+          (this.notifies).push({
+              "id" : row["id"], 
+              "time": row["time"],
+              "state": row["state"],
+          });
+          // console.log(row);
+        });
+      })
+      .catch(err => {
+        console.log(err);
+        throw err;
+      })
+      .finally(() => {
+        knex.destroy();
+      });
       
+
   },
   methods: {
     open(link) {
