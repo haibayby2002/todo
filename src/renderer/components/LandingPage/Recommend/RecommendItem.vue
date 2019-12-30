@@ -1,17 +1,17 @@
 <template>
-  <div class="w-33 mt-2 pl-1 pr-1">
+  <div class="w-33 mt-3 pl-2 pr-2 height">
     <div class="card">
-      <img :src="img_src" class="card-img-top" alt="Image" />
+      <img :src="img_src || './default.jpg'" class="card-img-top my-img" alt="Image" />
       <div class="card-body">
-        <h5 class="card-title">Card title</h5>
-        <p class="card-text my-card-text">{{description}} hello</p>
+        <h5 class="card-title">{{title}}</h5>
+        <p class="card-text my-card-text">{{description || "Không có mô tả"}}</p>
         <p class="card-text">
-          <small class="text-muted">Last updated 3 mins ago</small>
+          <small class="text-muted">aaa</small>
         </p>
-        <b-button block class="text-center" href="#" variant="danger" @click="openLesson">Go</b-button>
       </div>
-    </div>
 
+      <b-button block class="text-center" href="#" variant="danger" @click="openLesson(id)">Go</b-button>
+    </div>
     <!-- <b-card
         title="Card Title"
         img-src="https://picsum.photos/600/300/?image=25"
@@ -45,21 +45,35 @@ export default {
     title: String,
     description: String,
     img_src: String,
-    channel_title: String
+    // channel_title: String,
+    publishedAt: String
   },
   data: function() {
-    return {
-    };
+    return {};
   },
-  mounted: function() {
-  },
+  mounted: function() {},
   methods: {
-    openLesson: function() {}
+    openLesson: function(id) {
+      window.open('/#/video/' + id);
+      
+    }
   }
 };
 </script>
 
 <style scoped>
+.card-title{
+  font-size: 16px;
+}
+.card-text{
+  font-size: 12px;
+}
+.height {
+}
+.card-body {
+  height: 10rem;
+  overflow-y: scroll;
+}
 .card-group {
   display: inline;
 }
@@ -68,17 +82,20 @@ export default {
   -ms-flex: 0 0 20% !important;
   flex: 0 0 20% !important;
   max-width: 25%;
-  
+
   float: left;
 }
 .my-card-text {
-  height: 4rem;
+  /* height: 4rem;
   max-height: 4rem;
-  overflow-y: hidden;
+  overflow-y: hidden; */
 }
 .zoom {
 }
 .zoom:hover {
   transform: scale(1.5);
+}
+.my-img {
+  height: 150px;
 }
 </style>

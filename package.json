@@ -54,6 +54,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "knex": "^0.20.4",
+    "node-notifier": "^6.0.0",
     "sqlite3": "^4.1.1",
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
